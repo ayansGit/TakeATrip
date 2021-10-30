@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/_10sdp"
+    android:paddingLeft="@dimen/_10sdp"
+    android:paddingRight="@dimen/_10sdp">
+
+    <ImageView
+        android:id="@+id/ivIcon"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/hotel2"
+        android:padding="@dimen/_8sdp"
+        style="@style/ListIconImage" />
+
+    <TextView
+        android:id="@+id/tvLocation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/ivIcon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/ivIcon"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:textSize="@dimen/_15ssp"
+        style="@style/DefaultTextStyle"
+        android:textStyle="bold"
+        android:text="Maharaja Palace"/>
+
+    <TextView
+        android:id="@+id/tvCountry"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/tvLocation"
+        app:layout_constraintTop_toBottomOf="@id/tvLocation"
+        style="@style/DefaultTextStyle"
+        android:textSize="@dimen/_12ssp"
+        android:text="Jodhpur"/>
+
+    <RatingBar
+        android:id="@+id/rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvCountry"
+        app:layout_constraintStart_toStartOf="@id/tvCountry"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:isIndicator="true"
+        android:stepSize="1"
+        android:rating="5"
+        android:max="5"/>
+
+    <View
+        android:id="@+id/margin"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toStartOf="@id/ivIcon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rating"
+        android:layout_marginTop="@dimen/_10sdp"
+        style="@style/ListMargin"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
