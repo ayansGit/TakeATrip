@@ -1,5 +1,6 @@
 package com.takeatrip.views.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,5 +24,9 @@ class HotelActivity : AppCompatActivity() {
         hotelAdapter = HotelAdapter(this)
         rvHotels.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         rvHotels.adapter = hotelAdapter
+
+        fab.setOnClickListener {
+            startActivity(Intent(this, AddHotelActivity::class.java))
+        }
     }
 }

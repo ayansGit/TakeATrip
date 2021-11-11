@@ -47,4 +47,14 @@
         <item name="android:backgroundTint">@color/accent</item>
         <item name="tint">@color/white</item>
     </style>
+
+    <style name="CheckBox" parent="Theme.TakeATrip">
+        <item name="android:buttonTint">@color/grey</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
+    </style>
+
+    <style name="Image" parent="Theme.TakeATrip">
+        <item name="tint">@color/grey</item>
+    </style>
 </resources>

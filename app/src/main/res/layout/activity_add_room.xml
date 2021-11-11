@@ -4,26 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.activities.AddLocationActivity">
+    tools:context=".views.activities.AddRoomActivity">
 
     <include
         android:id="@+id/header"
         layout="@layout/header"/>
 
+
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/place"
+        android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_15sdp"
         app:layout_constraintTop_toBottomOf="@+id/header"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintVertical_bias="0.4"
-        android:layout_marginTop="@dimen/_20sdp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:hint="Name of the place">
+        android:hint="Room type name">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etPlace"
+            android:id="@+id/etRoomName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textCapWords"
@@ -33,26 +36,52 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/tvCapacity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/name"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginStart="@dimen/_2sdp"
+        android:textSize="@dimen/_12ssp"
+        style="@style/DefaultTextStyle"
+        android:text="Extra Beds:"/>
+
+    <Spinner
+        android:id="@+id/capacitySpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/tvCapacity"
+        app:layout_constraintBottom_toBottomOf="@id/tvCapacity"
+        app:layout_constraintStart_toEndOf="@id/tvCapacity"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:spinnerMode="dropdown"/>
+
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/country"
+        android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_15sdp"
-        app:layout_constraintTop_toBottomOf="@id/place"
+        app:layout_constraintTop_toBottomOf="@+id/tvCapacity"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0.4"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:hint="State/Country">
+        android:hint="Description"
+        android:visibility="gone">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etState"
+            android:id="@+id/etDescription"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textCapWords"
-            android:imeOptions="actionDone"
-            android:maxLines="1"
-            android:singleLine="true"/>
+            android:layout_height="@dimen/_100sdp"
+            android:imeOptions="actionNext"
+            android:gravity="start"/>
 
     </com.google.android.material.textfield.TextInputLayout>
-
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btSubmit"
@@ -62,10 +91,12 @@
         android:layout_marginEnd="@dimen/_15sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/country"
+        app:layout_constraintTop_toBottomOf="@id/description"
         android:backgroundTint="@color/accent"
         android:textColor="@color/white"
         android:layout_marginTop="@dimen/_20sdp"
-        android:text="Submit"/>
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:text="Submit"
+        android:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,6 +10,10 @@
         android:icon="@drawable/ic_location"
         android:title="Locations" />
     <item
+        android:id="@+id/rooms"
+        android:icon="@drawable/ic_bed_svgrepo_com"
+        android:title="Rooms" />
+    <item
         android:id="@+id/account"
         android:icon="@drawable/ic_account_icon"
         android:title="Account"

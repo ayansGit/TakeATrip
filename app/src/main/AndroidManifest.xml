@@ -14,6 +14,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TakeATrip">
         <activity
+            android:name=".views.activities.AddTransportActivity"
+            android:exported="true" />
+        <activity
+            android:name=".views.activities.TransportActivity"
+            android:exported="true" />
+        <activity
+            android:name=".views.activities.SelectRoomActivity"
+            android:exported="true" />
+        <activity
+            android:name=".views.activities.AddRoomActivity"
+            android:exported="true" />
+        <activity
+            android:name=".views.activities.AddHotelActivity"
+            android:exported="true" />
+        <activity
             android:name=".views.activities.AddLocationActivity"
             android:exported="true" />
         <activity

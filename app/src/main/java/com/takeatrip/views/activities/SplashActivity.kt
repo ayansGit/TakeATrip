@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.takeatrip.R
 import com.takeatrip.utils.StoragePreference
 
@@ -13,6 +14,7 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
+        StoragePreference.getToken(this)?.let { Log.d("TAG", it) }
         Handler(Looper.getMainLooper()).postDelayed({
             StoragePreference.getIsOrganisationAdded(this)?.also{
                 if(it.equals("No", ignoreCase = true)){

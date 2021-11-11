@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../Library/Android/sdk/platforms/android-31/data/res/layout/simple_spinner_item.xml" value="0.15945945945945947" />
         <entry key="app/src/main/res/drawable/account_item_bg.xml" value="0.16993243243243245" />
         <entry key="app/src/main/res/drawable/bottom_tab_selector.xml" value="0.16959459459459458" />
         <entry key="app/src/main/res/drawable/bottom_tab_selector_dark.xml" value="0.16959459459459458" />
@@ -13,19 +14,28 @@
         <entry key="app/src/main/res/drawable/ic_location.xml" value="0.16959459459459458" />
         <entry key="app/src/main/res/drawable/list_icon_bg_dark.xml" value="0.16993243243243245" />
         <entry key="app/src/main/res/drawable/location_icon_bg.xml" value="0.16993243243243245" />
+        <entry key="app/src/main/res/layout/activity_add_hotel.xml" value="0.1845484223627503" />
         <entry key="app/src/main/res/layout/activity_add_location.xml" value="0.15945945945945947" />
+        <entry key="app/src/main/res/layout/activity_add_room.xml" value="0.15945945945945947" />
+        <entry key="app/src/main/res/layout/activity_add_transport.xml" value="0.15033783783783783" />
         <entry key="app/src/main/res/layout/activity_hotel.xml" value="0.15945945945945947" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_organisation.xml" value="0.15912162162162163" />
         <entry key="app/src/main/res/layout/activity_registration.xml" value="0.18045409428581122" />
+        <entry key="app/src/main/res/layout/activity_select_room.xml" value="0.15945945945945947" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.1543918918918919" />
+        <entry key="app/src/main/res/layout/activity_vehicle.xml" value="0.165" />
         <entry key="app/src/main/res/layout/fragment_account.xml" value="0.15945945945945947" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.15033783783783783" />
         <entry key="app/src/main/res/layout/fragment_location.xml" value="0.18048912805342446" />
+        <entry key="app/src/main/res/layout/fragment_room.xml" value="0.15945945945945947" />
         <entry key="app/src/main/res/layout/header.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_hotel.xml" value="0.15945945945945947" />
         <entry key="app/src/main/res/layout/item_location.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/item_meal.xml" value="0.15945945945945947" />
+        <entry key="app/src/main/res/layout/item_room.xml" value="0.15945945945945947" />
+        <entry key="app/src/main/res/layout/item_room_types.xml" value="0.15945945945945947" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.15912162162162163" />
       </map>
     </option>

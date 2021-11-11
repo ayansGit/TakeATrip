@@ -9,6 +9,7 @@ import com.takeatrip.R
 import com.takeatrip.views.fragments.AccountFragment
 import com.takeatrip.views.fragments.DashboardFragment
 import com.takeatrip.views.fragments.LocationFragment
+import com.takeatrip.views.fragments.RoomFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +29,11 @@ class MainActivity : AppCompatActivity() {
                 R.id.location -> {
                     val downloadFragment = LocationFragment()
                     loadFragment(downloadFragment, "LOCATION")
+                }
+
+                R.id.rooms ->{
+                    val roomFragment = RoomFragment()
+                    loadFragment(roomFragment, "ROOM")
                 }
 
                 R.id.account -> {

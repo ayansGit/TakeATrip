@@ -6,11 +6,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.graphicalab.utils.BaseFragment
 import com.takeatrip.R
 import com.takeatrip.adapters.LocationAdapter
+import com.takeatrip.models.location.LocationData
 import com.takeatrip.utils.hide
+import com.takeatrip.viewModels.LocationViewModel
 import com.takeatrip.views.activities.AddLocationActivity
 import kotlinx.android.synthetic.main.fragment_location.*
 import kotlinx.android.synthetic.main.header.*
@@ -25,9 +29,11 @@ private const val ARG_PARAM2 = "param2"
  * Use the [LocationFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class LocationFragment : Fragment() {
+class LocationFragment : BaseFragment() {
 
     private lateinit var locationAdapter: LocationAdapter
+    private val locationList = ArrayList<LocationData>()
+    private lateinit var locationViewModel: LocationViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,14 +50,52 @@ class LocationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        locationViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
         ivBack.hide()
         tvTitle.text = "Locations"
-        locationAdapter = LocationAdapter(requireContext())
+        locationAdapter = LocationAdapter(requireContext(), locationList)
         rvLocations.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         rvLocations.adapter = locationAdapter
 
-        fab.setOnClickListener { startActivity(Intent(requireContext(), AddLocationActivity::class.java)) }
+        fab.setOnClickListener {
+            startActivity(Intent(requireContext(), AddLocationActivity::class.java))
+        }
+
+        observeLocationList()
+        observeLoader()
+        observeToast()
+
+
     }
+
+    private fun observeLocationList(){
+        locationViewModel.observeGetLocation().observe(viewLifecycleOwner, {
+            locationList.clear()
+            locationList.addAll(it)
+            locationAdapter.notifyDataSetChanged()
+        })
+    }
+
+    private fun observeLoader(){
+        locationViewModel.dataLoading.observe(viewLifecycleOwner, {
+            if(it)
+                showProgress()
+            else hideProgress()
+        })
+    }
+
+    private fun observeToast(){
+        locationViewModel.toastMessage.observe(viewLifecycleOwner, {
+            showToast(it)
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        locationViewModel.getLocation()
+    }
+
+
 
     companion object {
         /**

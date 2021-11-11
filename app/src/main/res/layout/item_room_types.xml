@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvRoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_weight="0.8"
+        style="@style/DefaultTextStyle"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold"
+        android:text="Super Delux room"/>
+
+
+    <TextView
+        android:id="@+id/tvSelectMeal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:textSize="@dimen/_12ssp"
+        android:textColor="@color/grey2"
+        android:text="Select Meal Type"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcMealType1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        tools:listitem="@layout/item_meal"
+        tools:itemCount="3"
+        android:nestedScrollingEnabled="false"/>
+
+    <CheckBox
+        android:id="@+id/cb1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_12ssp"
+        android:textColor="@color/grey2"
+        android:text="Extra Mattress (for age above 12 years)"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcMealType2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        tools:listitem="@layout/item_meal"
+        tools:itemCount="3"
+        android:nestedScrollingEnabled="false"
+        android:visibility="gone"/>
+
+    <CheckBox
+        android:id="@+id/cb2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_12ssp"
+        android:textColor="@color/grey2"
+        android:text="Without Extra Mattress (for child below 12 years)"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcMealType3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        tools:listitem="@layout/item_meal"
+        tools:itemCount="3"
+        android:nestedScrollingEnabled="false"
+        android:visibility="gone"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey3"/>
+</LinearLayout>
