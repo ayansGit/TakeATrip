@@ -4,9 +4,20 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.graphicalab.api.ApiHelper
 import com.graphicalab.api.ApiMethods
+import com.takeatrip.models.hotel.AddHotelResponse
+import com.takeatrip.models.hotel.GetHotelListResponse
+import com.takeatrip.models.hotel.Hotel
+import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData1
+import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData2
+import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData3
+import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData4
 import com.takeatrip.models.location.AddLocationResponse
 import com.takeatrip.models.location.GetLocationResponse
 import com.takeatrip.models.location.LocationData
+import com.takeatrip.models.meal.GetMealResponse
+import com.takeatrip.models.meal.MealData
+import com.takeatrip.models.room.RoomData
+import com.takeatrip.repository.HotelRepository
 import com.takeatrip.repository.LocationRepository
 import com.takeatrip.utils.StoragePreference
 
@@ -15,8 +26,15 @@ class HotelViewModel(application: Application) : BaseViewModel(application),
 
     private val addLocationLiveData = MutableLiveData<AddLocationResponse>()
     private val getLocationLiveData = MutableLiveData<List<LocationData>>()
+    private val getRoomLiveData = MutableLiveData<List<RoomData>>()
+    private val getMealLiveData = MutableLiveData<List<MealData>>()
+    private val getHotelLiveData = MutableLiveData<AddHotelResponse>()
+    private val getHotelListLiveData = MutableLiveData<List<Hotel>>()
 
     fun observeGetLocation() = getLocationLiveData
+    fun observeGetMeal() = getMealLiveData
+    fun observeAddHotel() = getHotelLiveData
+    fun observeGetHotel() = getHotelListLiveData
 
     override fun onSuccess(response: Any?, method: Enum<ApiMethods>) {
         dataLoading.value = false
@@ -24,7 +42,6 @@ class HotelViewModel(application: Application) : BaseViewModel(application),
         when (method) {
 
             ApiMethods.LOCATION_LIST -> {
-                if(response is GetLocationResponse){
                     if(response is GetLocationResponse){
                         if(response.success){
                             getLocationLiveData.value = response.data
@@ -37,6 +54,44 @@ class HotelViewModel(application: Application) : BaseViewModel(application),
                         }
 
                     }
+            }
+
+            ApiMethods.MEAL_LIST -> {
+                if(response is GetMealResponse){
+                    if(response.success){
+                      getMealLiveData.value = response.data
+                    }
+                    var message = ""
+                    for (msg in response.message) {
+                        message += msg + "\n"
+                    }
+                    toastMessage.value = message.trim()
+                }
+            }
+
+            ApiMethods.HOTEL_LIST -> {
+                if(response is GetHotelListResponse){
+                    if(response.success){
+                        getHotelListLiveData.value = response.data
+                    }
+                    var message = ""
+                    for (msg in response.message) {
+                        message += msg + "\n"
+                    }
+                    toastMessage.value = message.trim()
+                }
+            }
+
+            ApiMethods.ADD_HOTEL -> {
+                if(response is AddHotelResponse){
+                    if(response.success){
+                        getHotelLiveData.value = response
+                    }
+                    var message = ""
+                    for (msg in response.message) {
+                        message += msg + "\n"
+                    }
+                    toastMessage.value = message.trim()
                 }
             }
         }
@@ -51,6 +106,61 @@ class HotelViewModel(application: Application) : BaseViewModel(application),
         dataLoading.value = true
         StoragePreference.getToken(getApplication())?.let {
             LocationRepository.getInstance().locationList("Bearer $it", this)
+        }
+    }
+
+    fun getMeal(){
+        if(dataLoading.value == false)
+        dataLoading.value = true
+
+        StoragePreference.getToken(getApplication())?.let {
+            HotelRepository.getInstance().getMeal("Bearer $it", this)
+        }
+    }
+
+    fun getHotel(){
+        if(dataLoading.value == false)
+            dataLoading.value = true
+
+        StoragePreference.getToken(getApplication())?.let {
+            HotelRepository.getInstance().getHotel("Bearer $it", this)
+        }
+    }
+
+
+    fun addHotel(addHotelRequest: HotelRequestData1){
+        if(dataLoading.value == false)
+            dataLoading.value = true
+
+        StoragePreference.getToken(getApplication())?.let {
+            HotelRepository.getInstance().addHotel("Bearer $it", addHotelRequest,this)
+        }
+    }
+
+    fun addHotel(addHotelRequest: HotelRequestData2){
+        if(dataLoading.value == false)
+            dataLoading.value = true
+
+        StoragePreference.getToken(getApplication())?.let {
+            HotelRepository.getInstance().addHotel("Bearer $it", addHotelRequest,this)
+        }
+    }
+
+    fun addHotel(addHotelRequest: HotelRequestData3){
+        if(dataLoading.value == false)
+            dataLoading.value = true
+
+        StoragePreference.getToken(getApplication())?.let {
+            HotelRepository.getInstance().addHotel("Bearer $it", addHotelRequest,this)
+        }
+    }
+
+    fun addHotel(addHotelRequest: HotelRequestData4){
+        if(dataLoading.value == false)
+            dataLoading.value = true
+
+        StoragePreference.getToken(getApplication())?.let {
+            HotelRepository.getInstance().addHotel("Bearer $it", addHotelRequest,this)
         }
     }
 

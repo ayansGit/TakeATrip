@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TakeATrip">
         <activity
+            android:name=".views.activities.TravelPlanActivity"
+            android:exported="true" />
+        <activity
             android:name=".views.activities.AddTransportActivity"
             android:exported="true" />
         <activity

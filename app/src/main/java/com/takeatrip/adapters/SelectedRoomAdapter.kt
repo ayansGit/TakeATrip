@@ -6,19 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.takeatrip.R
+import com.takeatrip.models.meal.MealData
 import com.takeatrip.models.room.RoomData
 import com.takeatrip.utils.hide
 import com.takeatrip.utils.show
-import kotlinx.android.synthetic.main.activity_add_hotel.*
 
-class SelectedRoomAdapter(context: Context, roomList: ArrayList<RoomData>): RecyclerView.Adapter<SelectedRoomAdapter.ViewHolder>() {
+class SelectedRoomAdapter(context: Context, roomList: ArrayList<RoomData>, mealList: ArrayList<MealData>, selectedRoomListener: SelectedRoomListener): RecyclerView.Adapter<SelectedRoomAdapter.ViewHolder>() {
 
-    val context = context
-    val roomList = roomList
+    private val context = context
+    private val roomList = roomList
+    private val mealList = mealList
+    private val selectedRoomListener = selectedRoomListener
+    private var generalMealList = HashMap<String, HashMap<String, MealData>>()
+    private var withMattressList = HashMap<String, HashMap<String, MealData>>()
+    private var withoutMattressList = HashMap<String, HashMap<String, MealData>>()
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context)
@@ -42,13 +47,25 @@ class SelectedRoomAdapter(context: Context, roomList: ArrayList<RoomData>): Recy
         }
 
         holder.rcMealType1.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        holder.rcMealType1.adapter = MealAdapter(context)
+        holder.mealAdapter = MealAdapter(context, mealList){
+            generalMealList[roomList[position].roomTypeId] = it
+            selectedRoomListener.onGeneralMealUpdated(generalMealList)
+        }
+        holder.rcMealType1.adapter = holder.mealAdapter
 
         holder.rcMealType2.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        holder.rcMealType2.adapter = MealAdapter(context)
+        holder.with_mattress_meal_adapter = MealAdapter(context, mealList){
+            withMattressList[roomList[position].roomTypeId] = it
+            selectedRoomListener.onMealWithMattressUpdated(withMattressList)
+        }
+        holder.rcMealType2.adapter = holder.with_mattress_meal_adapter
 
         holder.rcMealType3.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        holder.rcMealType3.adapter = MealAdapter(context)
+        holder.without_mattress_meal_adapter = MealAdapter(context, mealList){
+            withoutMattressList[roomList[position].roomTypeId] = it
+            selectedRoomListener.onMealWithoutMattressUpdated(withoutMattressList)
+        }
+        holder.rcMealType3.adapter = holder.without_mattress_meal_adapter
 
     }
 
@@ -63,5 +80,15 @@ class SelectedRoomAdapter(context: Context, roomList: ArrayList<RoomData>): Recy
         val rcMealType3 = itemView.findViewById<RecyclerView>(R.id.rcMealType3)
         val cb1 = itemView.findViewById<CheckBox>(R.id.cb1)
         val cb2 = itemView.findViewById<CheckBox>(R.id.cb2)
+
+        lateinit var mealAdapter: MealAdapter
+        lateinit var with_mattress_meal_adapter: MealAdapter
+        lateinit var without_mattress_meal_adapter: MealAdapter
+    }
+
+    interface SelectedRoomListener{
+        fun onGeneralMealUpdated(mealMap: HashMap<String, HashMap<String, MealData>>)
+        fun onMealWithMattressUpdated(mealMap:HashMap<String, HashMap<String, MealData>>)
+        fun onMealWithoutMattressUpdated(mealMap: HashMap<String, HashMap<String, MealData>>)
     }
 }

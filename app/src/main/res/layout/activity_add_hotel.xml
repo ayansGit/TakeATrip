@@ -221,8 +221,6 @@
                 android:layout_marginEnd="@dimen/_15sdp"
                 android:layout_marginTop="@dimen/_10sdp"
                 app:layout_constraintTop_toBottomOf="@id/tvSelectMeal"
-                tools:listitem="@layout/item_meal"
-                tools:itemCount="4"
                 android:nestedScrollingEnabled="false"
                 android:visibility="gone"/>
 
@@ -262,8 +260,6 @@
                 android:layout_marginEnd="@dimen/_15sdp"
                 android:layout_marginTop="@dimen/_10sdp"
                 app:layout_constraintTop_toBottomOf="@id/tvSelectRoom"
-                tools:listitem="@layout/item_room_types"
-                tools:itemCount="4"
                 android:nestedScrollingEnabled="false"/>
 
             <Button

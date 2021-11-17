@@ -3,8 +3,15 @@ package com.graphicalab.api
 
 import com.takeatrip.models.auth.LoginResponse
 import com.takeatrip.models.auth.RegistrationResponse
+import com.takeatrip.models.hotel.AddHotelResponse
+import com.takeatrip.models.hotel.GetHotelListResponse
+import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData1
+import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData2
+import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData3
+import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData4
 import com.takeatrip.models.location.AddLocationResponse
 import com.takeatrip.models.location.GetLocationResponse
+import com.takeatrip.models.meal.GetMealResponse
 import com.takeatrip.models.organisation.OrganisationResponse
 import com.takeatrip.models.room.AddRoomResponse
 import com.takeatrip.models.room.GetRoomResponse
@@ -40,5 +47,24 @@ interface RetrofitService {
     @POST("user/room-type/store")
     fun addRooms(@Header("Authorization") token: String, @Field("name") name: String, @Field("allowed_extra_bed") allowExtraBed: Int): Call<AddRoomResponse>
 
+    @GET("user/meal-type/list")
+    fun getMeal(@Header("Authorization") token: String): Call<GetMealResponse>
 
+
+    @POST("user/hotel/store")
+    fun addHotels(@Header("Authorization") token: String, @Body hotelRequestData1: HotelRequestData1): Call<AddHotelResponse>
+
+    @POST("user/hotel/store")
+    fun addHotels(@Header("Authorization") token: String, @Body hotelRequestData2: HotelRequestData2): Call<AddHotelResponse>
+
+
+    @POST("user/hotel/store")
+    fun addHotels(@Header("Authorization") token: String, @Body hotelRequestData3: HotelRequestData3): Call<AddHotelResponse>
+
+
+    @POST("user/hotel/store")
+    fun addHotels(@Header("Authorization") token: String, @Body hotelRequestData4: HotelRequestData4): Call<AddHotelResponse>
+
+    @GET("user/hotel/list")
+    fun getHotel(@Header("Authorization") token: String): Call<GetHotelListResponse>
 }

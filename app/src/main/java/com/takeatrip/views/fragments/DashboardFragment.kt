@@ -10,6 +10,7 @@ import com.takeatrip.R
 import com.takeatrip.utils.hide
 import com.takeatrip.views.activities.HotelActivity
 import com.takeatrip.views.activities.TransportActivity
+import com.takeatrip.views.activities.TravelPlanActivity
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.header.*
 
@@ -55,6 +56,10 @@ class DashboardFragment : Fragment() {
 
         cvAddVehicles.setOnClickListener {
             startActivity(Intent(requireContext(), TransportActivity::class.java))
+        }
+
+        cvAddTourPlan.setOnClickListener {
+            startActivity(Intent(requireContext(), TravelPlanActivity::class.java))
         }
     }
 
