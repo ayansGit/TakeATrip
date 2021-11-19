@@ -35,17 +35,17 @@ class MealAdapter(context: Context, mealList: ArrayList<MealData>, onMealSelecte
         val pos = position
 
         holder.cb.text = mealList[position].sortName
-        holder.cb.isChecked = mealList[position].isSelected
+//        holder.cb.isChecked = mealList[position].isSelected
 
         holder.cb.setOnCheckedChangeListener { compoundButton, b ->
             if(b){
                 holder.price.show()
-                mealList[position].isSelected = true
+//                mealList[position].isSelected = true
                 mealMap[mealList[position].mealTypeId] = mealList[position]
                 onMealSelected(mealMap)
             }else {
                 holder.price.hide()
-                mealList[position].isSelected = false
+//                mealList[position].isSelected = false
                 mealList[pos].price = "0"
                 mealMap.remove(mealList[position].mealTypeId)
                 onMealSelected(mealMap)

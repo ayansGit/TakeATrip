@@ -15,6 +15,8 @@ import com.takeatrip.models.meal.GetMealResponse
 import com.takeatrip.models.organisation.OrganisationResponse
 import com.takeatrip.models.room.AddRoomResponse
 import com.takeatrip.models.room.GetRoomResponse
+import com.takeatrip.models.transport.AddTransportResponse
+import com.takeatrip.models.transport.GetTransportResponse
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -67,4 +69,13 @@ interface RetrofitService {
 
     @GET("user/hotel/list")
     fun getHotel(@Header("Authorization") token: String): Call<GetHotelListResponse>
+
+    @FormUrlEncoded
+    @POST("user/transport/store")
+    fun addTransport(@Header("Authorization") token: String, @Field("location_id") locationId: String, @Field("day") day: Int,
+                     @Field("description") description: String, @Field("transport_price") transportPrice: String,
+                     @Field("ticket_price") ticketPrice: String): Call<AddTransportResponse>
+
+    @GET("user/transport/list")
+    fun getTransport(@Header("Authorization") token: String): Call<GetTransportResponse>
 }

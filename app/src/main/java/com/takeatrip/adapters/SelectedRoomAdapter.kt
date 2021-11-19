@@ -18,7 +18,9 @@ class SelectedRoomAdapter(context: Context, roomList: ArrayList<RoomData>, mealL
 
     private val context = context
     private val roomList = roomList
-    private val mealList = mealList
+    private val mealList1 = mealList
+    private val mealList2 = mealList
+    private val mealList3 = mealList
     private val selectedRoomListener = selectedRoomListener
     private var generalMealList = HashMap<String, HashMap<String, MealData>>()
     private var withMattressList = HashMap<String, HashMap<String, MealData>>()
@@ -47,21 +49,21 @@ class SelectedRoomAdapter(context: Context, roomList: ArrayList<RoomData>, mealL
         }
 
         holder.rcMealType1.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        holder.mealAdapter = MealAdapter(context, mealList){
+        holder.mealAdapter = MealAdapter(context, mealList1){
             generalMealList[roomList[position].roomTypeId] = it
             selectedRoomListener.onGeneralMealUpdated(generalMealList)
         }
         holder.rcMealType1.adapter = holder.mealAdapter
 
         holder.rcMealType2.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        holder.with_mattress_meal_adapter = MealAdapter(context, mealList){
+        holder.with_mattress_meal_adapter = MealAdapter(context, mealList2){
             withMattressList[roomList[position].roomTypeId] = it
             selectedRoomListener.onMealWithMattressUpdated(withMattressList)
         }
         holder.rcMealType2.adapter = holder.with_mattress_meal_adapter
 
         holder.rcMealType3.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        holder.without_mattress_meal_adapter = MealAdapter(context, mealList){
+        holder.without_mattress_meal_adapter = MealAdapter(context, mealList3){
             withoutMattressList[roomList[position].roomTypeId] = it
             selectedRoomListener.onMealWithoutMattressUpdated(withoutMattressList)
         }
