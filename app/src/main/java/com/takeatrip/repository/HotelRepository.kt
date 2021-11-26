@@ -5,6 +5,8 @@ import com.graphicalab.api.ApiMethods
 import com.takeatrip.models.auth.LoginResponse
 import com.takeatrip.models.auth.RegistrationResponse
 import com.takeatrip.models.hotel.AddHotelResponse
+import com.takeatrip.models.hotel.DeleteHotelResponse
+import com.takeatrip.models.hotel.GetHotelByLocationResponse
 import com.takeatrip.models.hotel.GetHotelListResponse
 import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData1
 import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData2
@@ -48,6 +50,38 @@ class HotelRepository {
             }
 
             override fun onFailure(call: Call<GetHotelListResponse>, t: Throwable) {
+                apiResponseListener.onFailure(t.message)
+            }
+
+        })
+    }
+
+    fun getHotelByLocation(token: String, locationId: String, apiResponseListener: ApiHelper.ApiResponseListener) {
+        ApiHelper.RestService.getInstance().getHotelByLocation(token, locationId).enqueue(object : Callback<GetHotelByLocationResponse> {
+
+            override fun onResponse(call: Call<GetHotelByLocationResponse>, response: Response<GetHotelByLocationResponse>) {
+                if (response.code() == 200)
+                    apiResponseListener.onSuccess(response.body(), ApiMethods.HOTEL_LIST)
+                else apiResponseListener.onFailure(response.message())
+            }
+
+            override fun onFailure(call: Call<GetHotelByLocationResponse>, t: Throwable) {
+                apiResponseListener.onFailure(t.message)
+            }
+
+        })
+    }
+
+    fun deleteHotel(token: String, hotelId: String, apiResponseListener: ApiHelper.ApiResponseListener) {
+        ApiHelper.RestService.getInstance().deleteHotel(token, hotelId).enqueue(object : Callback<DeleteHotelResponse> {
+
+            override fun onResponse(call: Call<DeleteHotelResponse>, response: Response<DeleteHotelResponse>) {
+                if (response.code() == 200)
+                    apiResponseListener.onSuccess(response.body(), ApiMethods.DELETE_HOTEL)
+                else apiResponseListener.onFailure(response.message())
+            }
+
+            override fun onFailure(call: Call<DeleteHotelResponse>, t: Throwable) {
                 apiResponseListener.onFailure(t.message)
             }
 

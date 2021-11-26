@@ -4,6 +4,8 @@ package com.graphicalab.api
 import com.takeatrip.models.auth.LoginResponse
 import com.takeatrip.models.auth.RegistrationResponse
 import com.takeatrip.models.hotel.AddHotelResponse
+import com.takeatrip.models.hotel.DeleteHotelResponse
+import com.takeatrip.models.hotel.GetHotelByLocationResponse
 import com.takeatrip.models.hotel.GetHotelListResponse
 import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData1
 import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData2
@@ -78,4 +80,10 @@ interface RetrofitService {
 
     @GET("user/transport/list")
     fun getTransport(@Header("Authorization") token: String): Call<GetTransportResponse>
+
+    @GET("user/location/{locationId}/hotel")
+    fun getHotelByLocation(@Header("Authorization") token: String, @Path("locationId") locationId: String): Call<GetHotelByLocationResponse>
+
+    @GET("user/hotel/{hotelId}/delete")
+    fun deleteHotel(@Header("Authorization") token: String, @Path("hotelId") hotelId: String): Call<DeleteHotelResponse>
 }

@@ -4,6 +4,9 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.graphicalab.api.ApiHelper
 import com.graphicalab.api.ApiMethods
+import com.takeatrip.models.hotel.GetHotelByLocationResponse
+import com.takeatrip.models.hotel.GetHotelListResponse
+import com.takeatrip.models.hotel.Hotel
 import com.takeatrip.models.location.AddLocationResponse
 import com.takeatrip.models.location.GetLocationResponse
 import com.takeatrip.models.location.LocationData
@@ -21,8 +24,10 @@ class TravelPlanViewModel(application: Application) : BaseViewModel(application)
     private val getLocationLiveData = MutableLiveData<List<LocationData>>()
     private val getRoomLiveData = MutableLiveData<List<RoomData>>()
     private val getMealLiveData = MutableLiveData<List<MealData>>()
+    private val getHotelLiveData = MutableLiveData<List<Hotel>>()
 
     fun observeGetLocation() = getLocationLiveData
+    fun observeHotel() = getHotelLiveData
     fun observeGetMeal() = getMealLiveData
 
     override fun onSuccess(response: Any?, method: Enum<ApiMethods>) {
@@ -49,6 +54,21 @@ class TravelPlanViewModel(application: Application) : BaseViewModel(application)
                 if(response is GetMealResponse){
                     if(response.success){
                       getMealLiveData.value = response.data
+                    }else{
+                        var message = ""
+                        for (msg in response.message) {
+                            message += msg + "\n"
+                        }
+                        toastMessage.value = message.trim()
+                    }
+
+                }
+            }
+
+            ApiMethods.HOTEL_LIST -> {
+                if(response is GetHotelByLocationResponse){
+                    if(response.success){
+                        getHotelLiveData.value = response.data
                     }
                     var message = ""
                     for (msg in response.message) {
@@ -78,6 +98,15 @@ class TravelPlanViewModel(application: Application) : BaseViewModel(application)
 
         StoragePreference.getToken(getApplication())?.let {
             HotelRepository.getInstance().getMeal("Bearer $it", this)
+        }
+    }
+
+    fun getHotelByLocation(locationId: String){
+        if(dataLoading.value == false)
+            dataLoading.value = true
+
+        StoragePreference.getToken(getApplication())?.let {
+            HotelRepository.getInstance().getHotelByLocation("Bearer $it", locationId,this)
         }
     }
 

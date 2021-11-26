@@ -19,4 +19,9 @@
     <style name="BackIcon" parent="Theme.TakeATrip">
         <item name="android:src">@drawable/ic_back_dark</item>
     </style>
+
+    <style name="ShareIcon" parent="Theme.TakeATrip">
+        <item name="android:src">@drawable/ic_share</item>
+        <item name="tint">@color/accent</item>
+    </style>
 </resources>

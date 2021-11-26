@@ -53,13 +53,32 @@
         android:rating="5"
         android:max="5"/>
 
+    <Button
+        android:id="@+id/btExtraMattress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/rating"
+        app:layout_constraintStart_toStartOf="@id/rating"
+        android:textSize="@dimen/_8ssp"
+        android:text="Extra Mattress"
+        android:layout_marginTop="@dimen/_2sdp"/>
+
+    <ImageView
+        android:id="@+id/tvDelete"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="@dimen/_10sdp"
+        android:src="@drawable/ic_delete"/>
+
     <View
         android:id="@+id/margin"
         android:layout_width="0dp"
         android:layout_height="1dp"
         app:layout_constraintStart_toStartOf="@id/ivIcon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rating"
+        app:layout_constraintTop_toBottomOf="@id/btExtraMattress"
         android:layout_marginTop="@dimen/_10sdp"
         style="@style/ListMargin"/>
 

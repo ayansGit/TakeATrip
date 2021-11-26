@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.graphicalab.api.ApiHelper
 import com.graphicalab.api.ApiMethods
 import com.takeatrip.models.hotel.AddHotelResponse
+import com.takeatrip.models.hotel.DeleteHotelResponse
 import com.takeatrip.models.hotel.GetHotelListResponse
 import com.takeatrip.models.hotel.Hotel
 import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData1
@@ -30,11 +31,13 @@ class HotelViewModel(application: Application) : BaseViewModel(application),
     private val getMealLiveData = MutableLiveData<List<MealData>>()
     private val getHotelLiveData = MutableLiveData<AddHotelResponse>()
     private val getHotelListLiveData = MutableLiveData<List<Hotel>>()
+    private val deleteHotelLiveData = MutableLiveData<DeleteHotelResponse>()
 
     fun observeGetLocation() = getLocationLiveData
     fun observeGetMeal() = getMealLiveData
     fun observeAddHotel() = getHotelLiveData
     fun observeGetHotel() = getHotelListLiveData
+    fun observeDeleteHotel() = deleteHotelLiveData
 
     override fun onSuccess(response: Any?, method: Enum<ApiMethods>) {
         dataLoading.value = false
@@ -60,6 +63,21 @@ class HotelViewModel(application: Application) : BaseViewModel(application),
                 if(response is GetMealResponse){
                     if(response.success){
                       getMealLiveData.value = response.data
+                    }else{
+                        var message = ""
+                        for (msg in response.message) {
+                            message += msg + "\n"
+                        }
+                        toastMessage.value = message.trim()
+                    }
+
+                }
+            }
+
+            ApiMethods.HOTEL_LIST -> {
+                if(response is GetHotelListResponse){
+                    if(response.success){
+                        getHotelListLiveData.value = response.data
                     }
                     var message = ""
                     for (msg in response.message) {
@@ -69,10 +87,10 @@ class HotelViewModel(application: Application) : BaseViewModel(application),
                 }
             }
 
-            ApiMethods.HOTEL_LIST -> {
-                if(response is GetHotelListResponse){
+            ApiMethods.DELETE_HOTEL -> {
+                if(response is DeleteHotelResponse){
                     if(response.success){
-                        getHotelListLiveData.value = response.data
+                        deleteHotelLiveData.value = response
                     }
                     var message = ""
                     for (msg in response.message) {
@@ -163,6 +181,17 @@ class HotelViewModel(application: Application) : BaseViewModel(application),
             HotelRepository.getInstance().addHotel("Bearer $it", addHotelRequest,this)
         }
     }
+
+    fun deleteHotel(hotelId: String){
+        if(dataLoading.value == false)
+            dataLoading.value = true
+
+        StoragePreference.getToken(getApplication())?.let {
+            HotelRepository.getInstance().deleteHotel("Bearer $it", hotelId,this)
+        }
+    }
+
+
 
 
 }

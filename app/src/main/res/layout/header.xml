@@ -27,4 +27,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         style="@style/HeaderTitle"
         android:gravity="center" />
+
+    <ImageView
+        android:id="@+id/ivShare"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="@dimen/_10sdp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?selectableItemBackground"
+        style="@style/ShareIcon"
+        android:visibility="gone"/>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

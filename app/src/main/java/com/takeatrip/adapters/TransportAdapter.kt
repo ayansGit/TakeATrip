@@ -31,9 +31,9 @@ class TransportAdapter(context: Context, transportList: ArrayList<Transport>): R
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         holder.tvDay.text = "Day ${transportList[position].day}"
-        holder.tvTravelPlan.text = transportList[position].description
-        holder.tvTravelCost.text = transportList[position].transportPrice
-        holder.tvMiscellaneous.text = transportList[position].ticketPrice
+        holder.tvTravelPlan.text =  transportList[position].description
+        holder.tvTravelCost.text = "₹ ${transportList[position].transportPrice}"
+        holder.tvMiscellaneous.text = "₹ ${transportList[position].ticketPrice}"
     }
 
     override fun getItemCount(): Int {

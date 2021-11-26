@@ -11,8 +11,13 @@ import com.takeatrip.R
 import com.takeatrip.adapters.HotelAdapter
 import com.takeatrip.adapters.LocationAdapter
 import com.takeatrip.models.hotel.Hotel
+import com.takeatrip.utils.hide
+import com.takeatrip.utils.show
 import com.takeatrip.viewModels.HotelViewModel
 import kotlinx.android.synthetic.main.activity_hotel.*
+import kotlinx.android.synthetic.main.activity_hotel.fab
+import kotlinx.android.synthetic.main.activity_hotel.tvEmptyText
+import kotlinx.android.synthetic.main.activity_vehicle.*
 import kotlinx.android.synthetic.main.header.*
 
 class HotelActivity : BaseActivity() {
@@ -27,7 +32,15 @@ class HotelActivity : BaseActivity() {
         tvTitle.text = "Hotels"
         hotelViewModel = ViewModelProvider(this).get(HotelViewModel::class.java)
         ivBack.setOnClickListener { onBackPressed() }
-        hotelAdapter = HotelAdapter(this, hotelList)
+        hotelAdapter = HotelAdapter(this, hotelList, object : HotelAdapter.HotelAdapterListener {
+            override fun deleteHotel(hotelId: String) {
+                hotelViewModel.deleteHotel(hotelId)
+            }
+
+            override fun addExtraMattress(hotelId: String) {
+            }
+
+        })
         rvHotels.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         rvHotels.adapter = hotelAdapter
 
@@ -36,28 +49,43 @@ class HotelActivity : BaseActivity() {
         }
 
         observeAddHotel()
+        observeDeleteHotel()
         observeLoader()
         observeToast()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
         hotelViewModel.getHotel()
     }
 
-    private fun observeAddHotel(){
+    private fun observeAddHotel() {
         hotelViewModel.observeGetHotel().observe(this, {
-           hotelList.addAll(it)
+            hotelList.clear()
+            hotelList.addAll(it)
+            if (it.size > 0)
+                tvEmptyText.hide()
+            else tvEmptyText.show()
             hotelAdapter.notifyDataSetChanged()
         })
     }
 
-    private fun observeLoader(){
+    private fun observeDeleteHotel() {
+        hotelViewModel.observeDeleteHotel().observe(this, {
+            hotelViewModel.getHotel()
+        })
+    }
+
+    private fun observeLoader() {
         hotelViewModel.dataLoading.observe(this, {
-            if(it)
+            if (it)
                 showProgress()
             else hideProgress()
         })
     }
 
-    private fun observeToast(){
+    private fun observeToast() {
         hotelViewModel.toastMessage.observe(this, {
             showToast(it)
         })

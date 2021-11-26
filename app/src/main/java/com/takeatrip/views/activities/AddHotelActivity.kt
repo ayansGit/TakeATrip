@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.graphicalab.utils.BaseActivity
@@ -19,9 +21,9 @@ import com.takeatrip.models.meal.MealData
 import com.takeatrip.models.room.RoomData
 import com.takeatrip.viewModels.HotelViewModel
 import com.google.gson.Gson
-
-
-
+import kotlinx.android.synthetic.main.activity_add_hotel.btSubmit
+import kotlinx.android.synthetic.main.activity_add_hotel.locationSpinner
+import kotlinx.android.synthetic.main.activity_add_transport.*
 
 
 class AddHotelActivity : BaseActivity(), SelectedRoomAdapter.SelectedRoomListener {
@@ -62,6 +64,15 @@ class AddHotelActivity : BaseActivity(), SelectedRoomAdapter.SelectedRoomListene
         )
 
         locationSpinner.adapter = ad
+        locationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                location_id = locationList[p2].locationId
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+        }
 
 //        rcMealType.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 //        rcMealType.adapter = MealAdapter(this)
@@ -203,7 +214,7 @@ class AddHotelActivity : BaseActivity(), SelectedRoomAdapter.SelectedRoomListene
             val json = gson.toJson(hotelRequestData)
 
             Log.d("TAG", json)
-//            hotelViewModel.addHotel(hotelRequestData)
+            hotelViewModel.addHotel(hotelRequestData)
         }
 
 

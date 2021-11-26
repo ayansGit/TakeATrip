@@ -16,6 +16,8 @@ import com.takeatrip.adapters.TransportAdapter
 import com.takeatrip.models.location.LocationData
 import com.takeatrip.models.transport.Transport
 import com.takeatrip.models.transport.TransportLocation
+import com.takeatrip.utils.hide
+import com.takeatrip.utils.show
 import com.takeatrip.viewModels.LocationViewModel
 import com.takeatrip.viewModels.TransportViewModel
 import kotlinx.android.synthetic.main.activity_add_transport.*
@@ -92,6 +94,9 @@ class TransportActivity : BaseActivity() {
         transportViewModel.observeGetTransport().observe(this, {
             locationList.clear()
             locationList.addAll(it)
+            if(it.size>0)
+                tvEmptyText.hide()
+            else tvEmptyText.show()
             locationAdapter.notifyDataSetChanged()
         })
     }
