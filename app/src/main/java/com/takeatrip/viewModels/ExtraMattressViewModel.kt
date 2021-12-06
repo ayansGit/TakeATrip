@@ -5,10 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import com.graphicalab.api.ApiHelper
 import com.graphicalab.api.ApiMethods
 import com.takeatrip.models.hotel.AddExtraMattressResponse
+import com.takeatrip.models.hotel.addHotelRequest.ExtraMattressRequestData
 import com.takeatrip.models.location.AddLocationResponse
 import com.takeatrip.models.location.GetLocationResponse
 import com.takeatrip.models.location.LocationData
-import com.takeatrip.models.meal.ExtraMattressResponse
 import com.takeatrip.models.meal.GetMealResponse
 import com.takeatrip.models.meal.MealData
 import com.takeatrip.models.room.AddRoomResponse
@@ -20,18 +20,18 @@ import com.takeatrip.repository.LocationRepository
 import com.takeatrip.repository.RoomRepository
 import com.takeatrip.utils.StoragePreference
 
-class RoomViewModel(application: Application) : BaseViewModel(application),
+class ExtraMattressViewModel(application: Application) : BaseViewModel(application),
     ApiHelper.ApiResponseListener {
 
     private val addRoomLiveData = MutableLiveData<AddRoomResponse>()
     private val getRoomLiveData = MutableLiveData<List<RoomData>>()
     private val getMealLiveData = MutableLiveData<List<MealData>>()
-    private val getExtraMattressResponse = MutableLiveData<ExtraMattressResponse>()
+    private val addExtraMattressResponse = MutableLiveData<AddExtraMattressResponse>()
 
     fun observeAddRoom() = addRoomLiveData
     fun observeGetRoom() = getRoomLiveData
     fun observeGetMeal() = getMealLiveData
-    fun observeGetExtraMattress() = getExtraMattressResponse
+    fun observeAddExtraMattress() = addExtraMattressResponse
 
     override fun onSuccess(response: Any?, method: Enum<ApiMethods>) {
         dataLoading.value = false
@@ -97,10 +97,10 @@ class RoomViewModel(application: Application) : BaseViewModel(application),
                 }
             }
 
-            ApiMethods.GET_EXTRA_MATTRESS -> {
-                if(response is ExtraMattressResponse){
+            ApiMethods.ADD_EXTRA_MATTRESS -> {
+                if(response is AddExtraMattressResponse){
                     if(response.success){
-                        getExtraMattressResponse.value = response
+                        addExtraMattressResponse.value = response
                     }else{
                         var message = ""
                         for (msg in response.message) {
@@ -149,12 +149,25 @@ class RoomViewModel(application: Application) : BaseViewModel(application),
         }
     }
 
-    fun getExtraMattress(hotelId: String, roomId: String){
-        dataLoading.value = true
+    fun getMeal(){
+        if(dataLoading.value == false)
+            dataLoading.value = true
+
         StoragePreference.getToken(getApplication())?.let {
-            HotelRepository.getInstance().getExtraMattress("Bearer $it", hotelId, roomId,this)
+            HotelRepository.getInstance().getMeal("Bearer $it", this)
         }
     }
+
+    fun addExtraMattress(extraMattressRequestData: ExtraMattressRequestData){
+        if(dataLoading.value == false)
+            dataLoading.value = true
+
+        StoragePreference.getToken(getApplication())?.let {
+            HotelRepository.getInstance().addExtraMattress("Bearer $it", extraMattressRequestData, this)
+        }
+    }
+
+
 
 
 }

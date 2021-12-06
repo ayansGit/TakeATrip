@@ -7,6 +7,8 @@ data class Hotel(
     @SerializedName("hotel_id") val hotelId : String,
     @SerializedName("name") val name : String,
     @SerializedName("rating") val rating : Int,
+    @SerializedName("address") val address : String,
+    @SerializedName("hotel_extra_matress") val hotelExtraMattress: ArrayList<ExtraMattress>,
 ){
     override fun toString(): String {
         return name

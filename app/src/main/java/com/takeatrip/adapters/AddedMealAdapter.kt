@@ -17,12 +17,13 @@ import com.takeatrip.models.meal.MealData
 import com.takeatrip.utils.hide
 import com.takeatrip.utils.show
 
-class AddedMealAdapter(context: Context, mealList: ArrayList<MealData>, onMealSelected:(mealMap: HashMap<String, MealData>) -> Unit): RecyclerView.Adapter<AddedMealAdapter.ViewHolder>() {
+class AddedMealAdapter(context: Context, mealList: ArrayList<MealData>, onMealSelected:(mealData: MealData) -> Unit): RecyclerView.Adapter<AddedMealAdapter.ViewHolder>() {
 
     val context = context
     val mealList = mealList
     val onMealSelected = onMealSelected
     val mealMap = HashMap<String, MealData>()
+    var tvMeal: TextView? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -32,13 +33,17 @@ class AddedMealAdapter(context: Context, mealList: ArrayList<MealData>, onMealSe
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val pos = position
-
         holder.tvMeal.text = mealList[position].sortName
 
         holder.tvMeal.setOnClickListener {
-            holder.tvMeal.isSelected = !holder.tvMeal.isSelected
 
+            tvMeal?.also {
+                if(it.isSelected)
+                    it.isSelected = false
+            }
+            holder.tvMeal.isSelected = !holder.tvMeal.isSelected
+            tvMeal = holder.tvMeal
+            onMealSelected(mealList[position])
         }
 
 

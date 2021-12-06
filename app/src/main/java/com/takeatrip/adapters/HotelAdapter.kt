@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.takeatrip.R
 import com.takeatrip.models.hotel.Hotel
+import com.takeatrip.utils.hide
+import com.takeatrip.utils.show
 
 class HotelAdapter(context: Context, hotelList: ArrayList<Hotel>, hotelAdapterListener: HotelAdapterListener): RecyclerView.Adapter<HotelAdapter.ViewHolder>() {
 
@@ -29,9 +31,16 @@ class HotelAdapter(context: Context, hotelList: ArrayList<Hotel>, hotelAdapterLi
         holder.tvLocation.text = hotelList[position].name
         holder.rating.rating = hotelList[position].rating.toFloat()
 
+        if(hotelList[position].hotelExtraMattress.size>0){
+            holder.btExtraMattress.hide()
+        }else {
+            holder.btExtraMattress.show()
+        }
+
         holder.ivDelete.setOnClickListener {
             hotelAdapterListener.deleteHotel(hotelList[position].hotelId)
         }
+
         holder.btExtraMattress.setOnClickListener {
             hotelAdapterListener.addExtraMattress(hotelList[position].hotelId)
         }

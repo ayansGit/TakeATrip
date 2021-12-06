@@ -8,6 +8,7 @@ import com.takeatrip.models.location.AddLocationResponse
 import com.takeatrip.models.location.GetLocationResponse
 import com.takeatrip.models.organisation.OrganisationResponse
 import com.takeatrip.models.room.AddRoomResponse
+import com.takeatrip.models.room.GetRoomByHotelResponse
 import com.takeatrip.models.room.GetRoomResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -41,6 +42,22 @@ class RoomRepository {
             }
 
             override fun onFailure(call: Call<GetRoomResponse>, t: Throwable) {
+                apiResponseListener.onFailure(t.message)
+            }
+
+        })
+    }
+
+    fun roomList(token: String, hotelId: String, apiResponseListener: ApiHelper.ApiResponseListener) {
+        ApiHelper.RestService.getInstance().getRooms(token, hotelId).enqueue(object : Callback<GetRoomByHotelResponse> {
+            override fun onResponse(call: Call<GetRoomByHotelResponse>, response: Response<GetRoomByHotelResponse>) {
+
+                if (response.code() == 200)
+                    apiResponseListener.onSuccess(response.body(), ApiMethods.ROOM_LIST_2)
+                else apiResponseListener.onFailure(response.message())
+            }
+
+            override fun onFailure(call: Call<GetRoomByHotelResponse>, t: Throwable) {
                 apiResponseListener.onFailure(t.message)
             }
 

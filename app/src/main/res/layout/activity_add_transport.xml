@@ -52,7 +52,7 @@
                 android:layout_marginTop="@dimen/_5sdp"/>
 
             <TextView
-                android:id="@+id/tvSelectDay"
+                android:id="@+id/tvNoOfNights"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/margin1"
@@ -62,10 +62,10 @@
                 android:text="Select Day"/>
 
             <Spinner
-                android:id="@+id/daySpinner"
+                android:id="@+id/nightSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/tvSelectDay"
+                app:layout_constraintTop_toBottomOf="@+id/tvNoOfNights"
                 android:layout_marginStart="@dimen/_15sdp"
                 android:layout_marginEnd="@dimen/_15sdp"
                 android:layout_marginBottom="@dimen/_15sdp"
@@ -78,7 +78,7 @@
                 android:layout_height="@dimen/_1sdp"
                 app:layout_constraintStart_toStartOf="@id/locationSpinner"
                 app:layout_constraintEnd_toEndOf="@id/locationSpinner"
-                app:layout_constraintTop_toBottomOf="@id/daySpinner"
+                app:layout_constraintTop_toBottomOf="@id/nightSpinner"
                 style="@style/ListMargin"
                 android:layout_marginTop="@dimen/_5sdp"/>
 

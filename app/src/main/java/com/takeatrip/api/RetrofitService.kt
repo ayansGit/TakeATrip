@@ -3,19 +3,15 @@ package com.graphicalab.api
 
 import com.takeatrip.models.auth.LoginResponse
 import com.takeatrip.models.auth.RegistrationResponse
-import com.takeatrip.models.hotel.AddHotelResponse
-import com.takeatrip.models.hotel.DeleteHotelResponse
-import com.takeatrip.models.hotel.GetHotelByLocationResponse
-import com.takeatrip.models.hotel.GetHotelListResponse
-import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData1
-import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData2
-import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData3
-import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData4
+import com.takeatrip.models.hotel.*
+import com.takeatrip.models.hotel.addHotelRequest.*
 import com.takeatrip.models.location.AddLocationResponse
 import com.takeatrip.models.location.GetLocationResponse
+import com.takeatrip.models.meal.ExtraMattressResponse
 import com.takeatrip.models.meal.GetMealResponse
 import com.takeatrip.models.organisation.OrganisationResponse
 import com.takeatrip.models.room.AddRoomResponse
+import com.takeatrip.models.room.GetRoomByHotelResponse
 import com.takeatrip.models.room.GetRoomResponse
 import com.takeatrip.models.transport.AddTransportResponse
 import com.takeatrip.models.transport.GetTransportResponse
@@ -69,6 +65,9 @@ interface RetrofitService {
     @POST("user/hotel/store")
     fun addHotels(@Header("Authorization") token: String, @Body hotelRequestData4: HotelRequestData4): Call<AddHotelResponse>
 
+    @POST("user/hotel/matress/store")
+    fun addExtraMattress(@Header("Authorization") token: String, @Body extraMattressRequestData: ExtraMattressRequestData): Call<AddExtraMattressResponse>
+
     @GET("user/hotel/list")
     fun getHotel(@Header("Authorization") token: String): Call<GetHotelListResponse>
 
@@ -86,4 +85,13 @@ interface RetrofitService {
 
     @GET("user/hotel/{hotelId}/delete")
     fun deleteHotel(@Header("Authorization") token: String, @Path("hotelId") hotelId: String): Call<DeleteHotelResponse>
+
+    @GET("user/roomType/{hotelId}/list")
+    fun getRooms(@Header("Authorization") token: String, @Path("hotelId") hotelId: String): Call<GetRoomByHotelResponse>
+
+    @GET("user/mealType/{roomId}/list")
+    fun getMeal(@Header("Authorization") token: String, @Path("roomId") roomId: String): Call<GetMealResponse>
+
+    @GET("user/hotel/{hotelId}/roomType/{roomId}/extraMatress")
+    fun getExtraMattressMeal(@Header("Authorization") token: String, @Path("hotelId") hotelId: String, @Path("roomId") roomId: String): Call<ExtraMattressResponse>
 }

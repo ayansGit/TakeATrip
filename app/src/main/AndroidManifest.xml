@@ -10,12 +10,15 @@
     <application
         android:allowBackup="true"
         android:allowClearUserData="true"
-        android:largeHeap="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TakeATrip">
+        <activity
+            android:name=".views.activities.ExtraMattressActivity"
+            android:exported="true" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

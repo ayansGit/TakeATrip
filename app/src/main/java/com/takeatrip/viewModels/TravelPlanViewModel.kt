@@ -13,8 +13,11 @@ import com.takeatrip.models.location.LocationData
 import com.takeatrip.models.meal.GetMealResponse
 import com.takeatrip.models.meal.MealData
 import com.takeatrip.models.room.RoomData
+import com.takeatrip.models.transport.GetTransportResponse
+import com.takeatrip.models.transport.TransportLocation
 import com.takeatrip.repository.HotelRepository
 import com.takeatrip.repository.LocationRepository
+import com.takeatrip.repository.TransportRepository
 import com.takeatrip.utils.StoragePreference
 
 class TravelPlanViewModel(application: Application) : BaseViewModel(application),
@@ -25,10 +28,13 @@ class TravelPlanViewModel(application: Application) : BaseViewModel(application)
     private val getRoomLiveData = MutableLiveData<List<RoomData>>()
     private val getMealLiveData = MutableLiveData<List<MealData>>()
     private val getHotelLiveData = MutableLiveData<List<Hotel>>()
+    private val getTransportLiveData = MutableLiveData<List<TransportLocation>>()
+
 
     fun observeGetLocation() = getLocationLiveData
     fun observeHotel() = getHotelLiveData
     fun observeGetMeal() = getMealLiveData
+    fun observeGetTransport() = getTransportLiveData
 
     override fun onSuccess(response: Any?, method: Enum<ApiMethods>) {
         dataLoading.value = false
@@ -77,6 +83,22 @@ class TravelPlanViewModel(application: Application) : BaseViewModel(application)
                     toastMessage.value = message.trim()
                 }
             }
+
+            ApiMethods.TRANSPORT_LIST -> {
+                if (response is GetTransportResponse) {
+                    if (response.success)
+                        getTransportLiveData.value = response.data
+                    else{
+                        var message = ""
+                        for (msg in response.message) {
+                            message += msg + "\n"
+                        }
+                        toastMessage.value = message.trim()
+                    }
+
+                }
+
+            }
         }
     }
 
@@ -101,6 +123,15 @@ class TravelPlanViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
+    fun getMeal(roomId: String){
+        if(dataLoading.value == false)
+            dataLoading.value = true
+
+        StoragePreference.getToken(getApplication())?.let {
+            HotelRepository.getInstance().getMeal("Bearer $it", roomId, this)
+        }
+    }
+
     fun getHotelByLocation(locationId: String){
         if(dataLoading.value == false)
             dataLoading.value = true
@@ -109,6 +140,15 @@ class TravelPlanViewModel(application: Application) : BaseViewModel(application)
             HotelRepository.getInstance().getHotelByLocation("Bearer $it", locationId,this)
         }
     }
+
+    fun getTransport(){
+        dataLoading.value = true
+        StoragePreference.getToken(getApplication())?.let {
+            TransportRepository.getInstance().getTransport("Bearer $it", this)
+        }
+    }
+
+
 
 
 }

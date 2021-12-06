@@ -1,25 +1,22 @@
 package com.takeatrip.views.activities
 
 import android.Manifest
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Activity
 import android.os.Bundle
 import com.takeatrip.R
 import kotlinx.android.synthetic.main.activity_travel_plan.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.graphicalab.utils.BaseActivity
 import java.util.*
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
-import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.MediaStore
+import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,10 +25,8 @@ import com.itextpdf.io.image.ImageData
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
-import com.itextpdf.kernel.pdf.canvas.draw.SolidLine
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Image
-import com.itextpdf.layout.element.LineSeparator
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.property.HorizontalAlignment
 import com.itextpdf.layout.property.TextAlignment
@@ -42,7 +37,7 @@ import com.takeatrip.models.room.RoomData
 import com.takeatrip.utils.hide
 import com.takeatrip.utils.show
 import com.takeatrip.viewModels.TravelPlanViewModel
-import kotlinx.android.synthetic.main.activity_travel_plan.daySpinner
+import kotlinx.android.synthetic.main.activity_travel_plan.nightSpinner
 import kotlinx.android.synthetic.main.activity_travel_plan.locationSpinner
 import kotlinx.coroutines.*
 import pub.devrel.easypermissions.AfterPermissionGranted
@@ -53,31 +48,39 @@ import java.util.Locale
 import kotlin.collections.HashMap
 import kotlin.coroutines.CoroutineContext
 import androidx.core.content.FileProvider
-import com.itextpdf.kernel.font.PdfFontFactory
 
 import java.io.File
-import android.graphics.fonts.Font
 import android.view.View
 import android.widget.AdapterView
 import com.itextpdf.layout.element.List
 import com.takeatrip.models.hotel.Hotel
-import kotlinx.android.synthetic.main.activity_add_hotel.*
+import com.takeatrip.models.transport.Transport
+import com.takeatrip.models.transport.TransportLocation
+import com.takeatrip.utils.StoragePreference
 import kotlinx.android.synthetic.main.activity_travel_plan.btSubmit
+import kotlinx.android.synthetic.main.activity_vehicle.*
+import kotlinx.android.synthetic.main.header.*
+import kotlin.collections.ArrayList
 
 
 class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListener,
     EasyPermissions.PermissionCallbacks,
     CoroutineScope {
 
-    val daysList = ArrayList<String>()
+    val nightList = ArrayList<String>()
+    val dayList = ArrayList<String>()
     val roomList = ArrayList<RoomData>()
+    val allRoomList = ArrayList<RoomData>()
     val mealList = ArrayList<MealData>()
+    val transportLocationList = ArrayList<TransportLocation>()
     val hotelList = ArrayList<Hotel>()
     private val locationList = ArrayList<LocationData>()
+    lateinit var nightAdapter: ArrayAdapter<String>
     lateinit var dayAdapter: ArrayAdapter<String>
     lateinit var hotelAdapter: ArrayAdapter<Hotel>
     private lateinit var ad: ArrayAdapter<*>
     private var locationId: String = ""
+    private var hotelId: String = ""
     var startDate: String = ""
     var endDate: String = ""
     private var path: String = ""
@@ -86,6 +89,22 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
     private var pathUri: Uri? = null
     private lateinit var travelPlanViewModel: TravelPlanViewModel
     private lateinit var addHotelRoomAdapter: AddHotelRoomAdapter
+
+    private var selectedNight = "1"
+    private var selectedDay = "1"
+    private var locationName = ""
+
+    private var hotelPriceMap: TreeMap<String, TreeMap<String, MealData>> = TreeMap()
+    private var withMattressPriceMap: TreeMap<String, TreeMap<String, MealData>> = TreeMap()
+    private var withoutMattressPriceMap: TreeMap<String, TreeMap<String, MealData>> = TreeMap()
+//    private val hotelPriceMap: HashMap<String, ArrayList<MealData>> = HashMap()
+    private val hotelMap: TreeMap<String, String> = TreeMap()
+    private val transportPriceMap: HashMap<String, String> = HashMap()
+    private val roomPriceMap: TreeMap<String, MealData> = TreeMap()
+    private val roomWithMattressPriceMap: TreeMap<String, MealData> = TreeMap()
+    private val roomWithoutMattressPriceMap: TreeMap<String, MealData> = TreeMap()
+    private val selMealList: ArrayList<MealData> = ArrayList()
+//    private val selHotelList: ArrayList<ArrayList<MealData>> = ArrayList()
 
 
     companion object {
@@ -98,13 +117,56 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
         setContentView(R.layout.activity_travel_plan)
 
         travelPlanViewModel = ViewModelProvider(this).get(TravelPlanViewModel::class.java)
+        nightAdapter = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_spinner_item,
+            nightList
+        )
+        nightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        nightSpinner.adapter = nightAdapter
+        nightSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                selectedNight = nightList[p2]
+                hotelSpinner.setSelection(0)
+                roomPriceMap.clear()
+                selMealList.clear()
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+        }
+
         dayAdapter = ArrayAdapter<String>(
             this,
             android.R.layout.simple_spinner_item,
-            daysList
+            dayList
         )
         dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         daySpinner.adapter = dayAdapter
+        daySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                val transport = getTransportDetail(dayList[p2])
+                if (transport != null) {
+                    transport.also {
+                        transportDetail.text = it.description
+                        tvTransportCost.text = it.transportPrice
+                        tvMiscellaneousCost.text = it.ticketPrice
+                    }
+                } else {
+                    transportDetail.text = ""
+                    tvTransportCost.text = ""
+                    tvMiscellaneousCost.text = ""
+                    showToast("No travel plan is there for day ${dayList[p2]}")
+                }
+
+
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+        }
 
         ad = ArrayAdapter<LocationData>(
             this,
@@ -118,7 +180,9 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
         locationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 locationId = locationList[p2].locationId
+                locationName = locationList[p2].name
                 travelPlanViewModel.getHotelByLocation(locationId)
+
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -133,6 +197,26 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
         )
         hotelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         hotelSpinner.adapter = hotelAdapter
+        hotelSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                hotelId = hotelList[p2].hotelId
+                if (hotelList[p2].id == 0) {
+                    llHotel.hide()
+                    roomList.clear()
+                    addHotelRoomAdapter.notifyDataSetChanged()
+                } else {
+                    llHotel.show()
+                    rating.rating = hotelList[p2].rating.toFloat()
+                    tvDescription.text = hotelList[p2].address
+                    hotelMap["night$selectedNight" ]= hotelList[p2].name
+                }
+
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+        }
 
         etStartDate.setOnClickListener {
             showCalendar(etStartDate, (System.currentTimeMillis() - 1000)) {
@@ -141,14 +225,14 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
                 startDate = sdf.format(it)
 
                 etEndDate.setText("")
-                daySpinner.hide()
-                tvSelectDay.hide()
+                nightSpinner.hide()
+                tvNoOfNights.hide()
                 margin2.hide()
                 tvSelectHotel.hide()
                 hotelSpinner.hide()
-                llHotel.hide()
                 margin3.hide()
                 llTransport.hide()
+                btSubmit.hide()
 
             }
         }
@@ -173,17 +257,24 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
 
                     val diff = it.time - startDate.time
                     val dayCount = diff.toFloat() / (24 * 60 * 60 * 1000) + 1f
+
+                    nightList.clear()
+                    dayList.clear()
                     for (i in 1..dayCount.toInt()) {
-                        daysList.add(i.toString())
+                        dayList.add(i.toString())
                     }
-                    daySpinner.show()
-                    tvSelectDay.show()
+                    for (i in 1 until dayCount.toInt()) {
+                        nightList.add(i.toString())
+                    }
+                    nightSpinner.show()
+                    tvNoOfNights.show()
                     margin2.show()
                     tvSelectHotel.show()
                     hotelSpinner.show()
-                    llHotel.show()
                     margin3.show()
                     llTransport.show()
+                    btSubmit.show()
+                    nightAdapter.notifyDataSetChanged()
                     dayAdapter.notifyDataSetChanged()
                     showToast(dayCount.toInt().toString())
                 }
@@ -197,15 +288,24 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
 
         observeLocationList()
         observeHotelList()
-        observeMealList()
+        observeGetTransport()
         observeLoader()
         observeToast()
 
         travelPlanViewModel.getLocation()
-        travelPlanViewModel.getMeal()
+        travelPlanViewModel.getTransport()
 
         btSubmit.setOnClickListener {
             submit()
+        }
+        ivBack.setOnClickListener {
+            onBackPressed()
+        }
+
+        btAddMore.setOnClickListener {
+            val intent = Intent(this, SelectRoomActivity::class.java)
+            intent.putExtra("HOTEL_ID", hotelId)
+            startActivityForResult(intent, 1)
         }
     }
 
@@ -219,8 +319,52 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
 
             launch {
                 showProgress()
-                createPdf()
+                var totalPrice = 0
+                for ((k, value) in hotelPriceMap) {
+                    for ((i,v) in value) {
+                        totalPrice += v.price.toInt()
+                    }
+                    val withMattress = withMattressPriceMap[k]
+                    if(withMattress!=null){
+                        for ((i,v) in withMattress) {
+                            totalPrice += v.price.toInt()
+                        }
+                    }
+                    val withoutMattress = withoutMattressPriceMap[k]
+                    if(withoutMattress!=null){
+                        for ((i,v) in withoutMattress) {
+                            totalPrice += v.price.toInt()
+                        }
+                    }
+                }
+
+                getTransportList()?.also {
+
+                    val noOfPeople = if(etNoOfPeople.text.toString().isNotEmpty())
+                        etNoOfPeople.text.toString().toInt()
+                    else 1
+
+                    val noOfTransport = if(etNoOfTransport.text.toString().isNotEmpty())
+                        etNoOfTransport.text.toString().toInt()
+                    else 1
+
+                    if (it.size > dayList.size) {
+                        for (i in 0 until dayList.size) {
+                            totalPrice += it[i].transportPrice.toInt() * noOfTransport
+                            totalPrice += it[i].ticketPrice.toInt() * noOfPeople
+                        }
+                    } else {
+                        for (i in 0 until it.size) {
+                            totalPrice += it[i].transportPrice.toInt() * noOfTransport
+                            totalPrice += it[i].ticketPrice.toInt() * noOfPeople
+                        }
+                    }
+                }
+
+                Log.d("Total Price: ", totalPrice.toString())
+                createPdf(totalPrice)
                 hideProgress()
+
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     val uri = FileProvider.getUriForFile(
@@ -240,10 +384,10 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
                     startActivity(intent)
                 }
 
-                /*val intent = Intent(this@TravelPlanActivity, TravelPlanPreviewActivity::class.java)
-                intent.putExtra("URI", pathUri)
-                intent.putExtra("FILE", pdfFile)
-                startActivity(intent)*/
+                StoragePreference.saveHotelPriceMap(this@TravelPlanActivity, TreeMap())
+                StoragePreference.saveWithMattressPriceMap(this@TravelPlanActivity, TreeMap())
+                StoragePreference.saveWithoutMattressPriceMap(this@TravelPlanActivity, TreeMap())
+
             }
         } else {
             EasyPermissions.requestPermissions(
@@ -280,7 +424,78 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
         dpDialog.show()
     }
 
-    override fun onMealSelected(mealMap: HashMap<String, MealData>) {
+    private fun getTransportDetail(selectedDay: String): Transport? {
+        try {
+            return transportLocationList.first { it.locationId == this.locationId }
+                .transports.first { it.day.toString() == selectedDay }
+        } catch (exception: Exception) {
+            exception.printStackTrace()
+        }
+        return null
+    }
+
+    private fun getTransportList(): ArrayList<Transport>? {
+        try {
+            return transportLocationList.first { it.locationId == this.locationId }.transports
+        } catch (exception: Exception) {
+            exception.printStackTrace()
+        }
+        return null
+    }
+
+    override fun onMealSelected(roomCount: Int, mealData: MealData) {
+
+    }
+
+    override fun onMealSelected(roomId: String, mealData: MealData) {
+        val preHotelPriceMap = StoragePreference.getHotelPriceMap(this)
+
+        roomPriceMap[roomId] = mealData
+        val newHotelPriceMap = TreeMap<String, TreeMap<String, MealData>>()
+        newHotelPriceMap["night$selectedNight"] = roomPriceMap
+
+        if(preHotelPriceMap.size>0){
+            preHotelPriceMap.putAll(newHotelPriceMap)
+            hotelPriceMap = preHotelPriceMap
+            StoragePreference.saveHotelPriceMap(this, hotelPriceMap)
+        }else{
+            hotelPriceMap = newHotelPriceMap
+            StoragePreference.saveHotelPriceMap(this, newHotelPriceMap)
+        }
+    }
+
+    override fun onWithExtraMattressSelected(roomId: String, mealData: MealData) {
+        val preWithMattressPriceMap = StoragePreference.getWithMattressPriceMap(this)
+
+        roomWithMattressPriceMap[roomId] = mealData
+        val newPriceMap = TreeMap<String, TreeMap<String, MealData>>()
+        newPriceMap["night$selectedNight"] = roomWithMattressPriceMap
+
+        if(preWithMattressPriceMap.size>0){
+            preWithMattressPriceMap.putAll(newPriceMap)
+            withMattressPriceMap = preWithMattressPriceMap
+            StoragePreference.saveWithMattressPriceMap(this, withMattressPriceMap)
+        }else{
+            withMattressPriceMap = newPriceMap
+            StoragePreference.saveWithMattressPriceMap(this, newPriceMap)
+        }
+    }
+
+    override fun onWithoutExtraMattressSelected(roomId: String, mealData: MealData) {
+        val preWithoutMattressPriceMap = StoragePreference.getWithoutMattressPriceMap(this)
+
+        roomWithoutMattressPriceMap[roomId] = mealData
+        val newPriceMap = TreeMap<String, TreeMap<String, MealData>>()
+        newPriceMap["night$selectedNight"] = roomWithoutMattressPriceMap
+
+        if(preWithoutMattressPriceMap.size>0){
+            preWithoutMattressPriceMap.putAll(newPriceMap)
+            withoutMattressPriceMap = preWithoutMattressPriceMap
+            StoragePreference.saveWithoutMattressPriceMap(this, withoutMattressPriceMap)
+        }else{
+            withoutMattressPriceMap = newPriceMap
+            StoragePreference.saveWithoutMattressPriceMap(this, newPriceMap)
+        }
     }
 
     private fun observeLocationList() {
@@ -296,16 +511,16 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
     private fun observeHotelList() {
         travelPlanViewModel.observeHotel().observe(this, {
             hotelList.clear()
+            hotelList.add(Hotel(0, "", "Select Hotel", 0, "", ArrayList()))
             hotelList.addAll(it)
             hotelAdapter.notifyDataSetChanged()
         })
     }
 
-    private fun observeMealList() {
-        travelPlanViewModel.observeGetMeal().observe(this, {
-            mealList.clear()
-            mealList.addAll(it)
-            addHotelRoomAdapter.notifyDataSetChanged()
+
+    private fun observeGetTransport() {
+        travelPlanViewModel.observeGetTransport().observe(this, {
+            transportLocationList.addAll(it)
         })
     }
 
@@ -323,8 +538,16 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
         })
     }
 
+    private fun getRoomFromId(id: String): RoomData{
+        return allRoomList.first { it.roomTypeId == id }
+    }
 
-    private suspend fun createPdf() {
+    private fun extractRoomId(value: String): String{
+       return value.split("~")[1].toString()
+    }
+
+
+    private suspend fun createPdf(totalPrice: Int) {
 
         withContext(Dispatchers.IO) {
             val pdfFilePath = createTempFile(
@@ -353,8 +576,7 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
                 val imageData: ImageData = ImageDataFactory.create(stream.toByteArray())
                 val image: Image = Image(imageData).setHeight(100f)
                 document.add(image.setHorizontalAlignment(HorizontalAlignment.CENTER))
-                //document.add(pageTitle.setFont(subFont).setFontSize(24f))
-//                document.add(LineSeparator(SolidLine(1f)).setMarginTop(4f))
+
                 val header = Paragraph(
                     "Dear Sir, " + "\n" +
                             "Greetings from Take A Trip...!!!" + "\n" +
@@ -369,36 +591,117 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
                 document.add(dateOfTravel)
                 document.add(line)
 
+                locationName = if (etTourName.text.toString().isEmpty())
+                    locationName
+                else etTourName.text.toString()
+
                 val title =
-                    Paragraph("PORT BLAIR 3NT + HAVELOCK 1NT + NEIL ISLAND 1NT").setFontSize(16f)
+                    Paragraph(locationName).setFontSize(16f)
                 title.setTextAlignment(TextAlignment.CENTER)
                 document.add(title)
                 document.add(line)
 
-                for (i in 1..4) {
-                    val paragraph = Paragraph("Day$i").setFontSize(15f)
+                val plan = Paragraph("TRAVEL ITINERARY: ").setFontSize(16f).setBold()
+                document.add(plan)
+
+                getTransportList()?.also {
+                    val noOfPeople = if(etNoOfPeople.text.toString().isNotEmpty())
+                        etNoOfPeople.text.toString().toInt()
+                    else 1
+
+                    val noOfTransport = if(etNoOfTransport.text.toString().isNotEmpty())
+                        etNoOfTransport.text.toString().toInt()
+                    else 1
+
+                    if (it.size > dayList.size) {
+                        for (i in 0 until dayList.size) {
+                            val transportPrice = it[i].transportPrice.toInt() * noOfTransport
+                            val otherPrice = it[i].ticketPrice.toInt() * noOfPeople
+
+                            val paragraph = Paragraph("Day${i + 1}").setFontSize(15f)
+                            val list = List()
+                            list.add("${it[i].description} | Transport: Rs$transportPrice | Others: Rs$otherPrice | TOTAL: Rs${transportPrice+otherPrice}")
+                                .setFontSize(14f)
+                            document.add(paragraph)
+                            document.add(list)
+                            document.add(line)
+                        }
+                    } else {
+                        for (i in 0 until it.size) {
+                            val transportPrice = it[i].transportPrice.toInt() * noOfTransport
+                            val otherPrice = it[i].ticketPrice.toInt() * noOfPeople
+
+                            val paragraph = Paragraph("Day${i + 1}").setFontSize(15f)
+                            val list = List()
+                            list.add("${it[i].description} | Transport: Rs$transportPrice | Others: Rs$otherPrice | TOTAL: Rs${transportPrice+otherPrice}")
+                                .setFontSize(14f)
+                            document.add(paragraph)
+                            document.add(list)
+                            document.add(line)
+                        }
+                    }
+                }
+
+                document.add(line)
+                val hotel = Paragraph("HOTELS USED: ").setFontSize(16f).setBold()
+                document.add(hotel)
+
+                var noOfNights = 1
+                for ((k, value) in hotelPriceMap) {
+                    var totalPrice = 0
+                    val withMattress = withMattressPriceMap[k]
+                    val withoutMattress = withoutMattressPriceMap[k]
+                    var room = ""
+                    for ((i,v) in value) {
+                        var withMattressStr = "Extra Mattress for age above 12"
+                        var withoutMattressStr = "No Extra Mattress for age below 12"
+                        if(withMattress!=null){
+                            if(withMattress[i]!=null){
+                                withMattressStr = "$withMattressStr(${withMattress[i]?.sortName}:Rs${withMattress[i]?.price})"
+                            }else{
+                                withMattressStr = ""
+                            }
+                        }else withMattressStr = ""
+
+                        if(withoutMattress!=null){
+                            if(withoutMattress[i]!=null){
+                                withoutMattressStr = "$withoutMattressStr(${withoutMattress[i]?.sortName}:Rs${withoutMattress[i]?.price})"
+                            }else{
+                                withoutMattressStr = ""
+                            }
+                        }else withoutMattressStr = ""
+
+                        room = "$room ${getRoomFromId(extractRoomId(i)).name}(${v.sortName}:Rs${v.price}) | ${withMattressStr} | ${withoutMattressStr} , "
+                        totalPrice += v.price.toInt()
+                    }
+
+                    if(withMattress!=null){
+                        for ((i,v) in withMattress) {
+                            totalPrice += v.price.toInt()
+                        }
+                    }
+
+                    if(withoutMattress!=null){
+                        for ((i,v) in withoutMattress) {
+                            totalPrice += v.price.toInt()
+                        }
+                    }
                     val list = List()
-                    list.add("Post breakfast excursion trip to Netaji Subhash Chandra Bose Island (Ross Island), It was the Capital of Port Blair during British and Japanese regime, prior to India’s Independence. Later we will visit North Bay, It is also called “The Gate Way to Port Blair”. Overnight in Port Blair. ")
-                        .setFontSize(14f)
+                    list.add("${hotelMap[k]}: $room TOTAL PRICE: Rs$totalPrice").setFontSize(14f)
+                    val paragraph = Paragraph("Night${noOfNights}").setFontSize(15f)
+
                     document.add(paragraph)
                     document.add(list)
                     document.add(line)
-                }
+                    noOfNights++
 
-                val hotel = Paragraph("Hotels Used: ").setFontSize(16f)
-                document.add(hotel)
-
-                for (i in 1..4) {
-                    val list = List()
-                    list.add("Hotel $i(Double Bedroom)-MAP").setFontSize(14f)
-                    document.add(list)
                 }
                 document.add(line)
+                document.add(line)
 
-                val price = Paragraph("Total Cost: Rs.36, 200/- ").setFontSize(16f)
+                val price = Paragraph("TOTAL COST: Rs ${totalPrice}/- ").setFontSize(16f).setBold()
                 document.add(price)
-                val text2 =
-                    Paragraph("The above cost is Nett and Non Commissionable.").setFontSize(12f)
+                val text2 = Paragraph("The above cost is Nett and Non Commissionable.").setFontSize(12f)
                 document.add(text2)
 
                 document.add(line)
@@ -417,21 +720,6 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
 
     }
 
-    private fun saveFile() {
-
-        /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                put(MediaStore.MediaColumns.MIME_TYPE, ".pdf")
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
-            }
-            val resolver = contentResolver
-            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
-
-        }else{
-
-        }*/
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -443,34 +731,33 @@ class TravelPlanActivity : BaseActivity(), AddHotelRoomAdapter.SelectedRoomListe
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        launch {
-
-            showProgress()
-            createPdf()
-            hideProgress()
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                val uri = FileProvider.getUriForFile(
-                    this@TravelPlanActivity,
-                    "$packageName.fileProvider",
-                    pdfFile!!
-                )
-                intent = Intent(Intent.ACTION_VIEW)
-                intent.data = uri
-                intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                startActivity(intent)
-            } else {
-                intent = Intent(Intent.ACTION_VIEW)
-                intent.setDataAndType(pathUri, "application/pdf")
-                intent = Intent.createChooser(intent, "Open File")
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
-        }
+        submit()
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            data?.getSerializableExtra("ROOM")?.let {
+                roomList.add(it as RoomData)
+                allRoomList.add(it as RoomData)
+                addHotelRoomAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        StoragePreference.saveHotelPriceMap(this, TreeMap())
+        StoragePreference.saveWithMattressPriceMap(this, TreeMap())
+        StoragePreference.saveWithoutMattressPriceMap(this, TreeMap())
     }
 
     private val job = Job()

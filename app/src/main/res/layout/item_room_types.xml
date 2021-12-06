@@ -42,7 +42,8 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/_12ssp"
         android:textColor="@color/grey2"
-        android:text="Extra Mattress (for age above 12 years)"/>
+        android:text="Extra Mattress (for age above 12 years)"
+        android:visibility="gone"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcMealType2"
         android:layout_width="match_parent"
@@ -60,7 +61,8 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/_12ssp"
         android:textColor="@color/grey2"
-        android:text="Without Extra Mattress (for child below 12 years)"/>
+        android:text="Without Extra Mattress (for child below 12 years)"
+        android:visibility="gone"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcMealType3"
         android:layout_width="match_parent"

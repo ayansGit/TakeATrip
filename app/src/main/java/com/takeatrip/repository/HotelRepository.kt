@@ -2,22 +2,10 @@ package com.takeatrip.repository
 
 import com.graphicalab.api.ApiHelper
 import com.graphicalab.api.ApiMethods
-import com.takeatrip.models.auth.LoginResponse
-import com.takeatrip.models.auth.RegistrationResponse
-import com.takeatrip.models.hotel.AddHotelResponse
-import com.takeatrip.models.hotel.DeleteHotelResponse
-import com.takeatrip.models.hotel.GetHotelByLocationResponse
-import com.takeatrip.models.hotel.GetHotelListResponse
-import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData1
-import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData2
-import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData3
-import com.takeatrip.models.hotel.addHotelRequest.HotelRequestData4
-import com.takeatrip.models.location.AddLocationResponse
-import com.takeatrip.models.location.GetLocationResponse
+import com.takeatrip.models.hotel.*
+import com.takeatrip.models.hotel.addHotelRequest.*
+import com.takeatrip.models.meal.ExtraMattressResponse
 import com.takeatrip.models.meal.GetMealResponse
-import com.takeatrip.models.organisation.OrganisationResponse
-import com.takeatrip.models.room.AddRoomResponse
-import com.takeatrip.models.room.GetRoomResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,6 +22,40 @@ class HotelRepository {
             }
 
             override fun onFailure(call: Call<GetMealResponse>, t: Throwable) {
+                apiResponseListener.onFailure(t.message)
+            }
+
+        })
+    }
+
+    fun getMeal(token: String, roomId: String, apiResponseListener: ApiHelper.ApiResponseListener) {
+
+        ApiHelper.RestService.getInstance().getMeal(token, roomId).enqueue(object : Callback<GetMealResponse> {
+
+            override fun onResponse(call: Call<GetMealResponse>, response: Response<GetMealResponse>) {
+                if (response.code() == 200)
+                    apiResponseListener.onSuccess(response.body(), ApiMethods.MEAL_LIST)
+                else apiResponseListener.onFailure(response.message())
+            }
+
+            override fun onFailure(call: Call<GetMealResponse>, t: Throwable) {
+                apiResponseListener.onFailure(t.message)
+            }
+
+        })
+    }
+
+    fun getExtraMattress(token: String, hotelId: String, roomId: String, apiResponseListener: ApiHelper.ApiResponseListener) {
+
+        ApiHelper.RestService.getInstance().getExtraMattressMeal(token, hotelId, roomId).enqueue(object : Callback<ExtraMattressResponse> {
+
+            override fun onResponse(call: Call<ExtraMattressResponse>, response: Response<ExtraMattressResponse>) {
+                if (response.code() == 200)
+                    apiResponseListener.onSuccess(response.body(), ApiMethods.GET_EXTRA_MATTRESS)
+                else apiResponseListener.onFailure(response.message())
+            }
+
+            override fun onFailure(call: Call<ExtraMattressResponse>, t: Throwable) {
                 apiResponseListener.onFailure(t.message)
             }
 
@@ -146,6 +168,22 @@ class HotelRepository {
             }
 
             override fun onFailure(call: Call<AddHotelResponse>, t: Throwable) {
+                apiResponseListener.onFailure(t.message)
+            }
+
+        })
+    }
+
+    fun addExtraMattress(token: String, extraMattressRequestData: ExtraMattressRequestData, apiResponseListener: ApiHelper.ApiResponseListener) {
+        ApiHelper.RestService.getInstance().addExtraMattress(token, extraMattressRequestData).enqueue(object : Callback<AddExtraMattressResponse> {
+
+            override fun onResponse(call: Call<AddExtraMattressResponse>, response: Response<AddExtraMattressResponse>) {
+                if (response.code() == 200)
+                    apiResponseListener.onSuccess(response.body(), ApiMethods.ADD_EXTRA_MATTRESS)
+                else apiResponseListener.onFailure(response.message())
+            }
+
+            override fun onFailure(call: Call<AddExtraMattressResponse>, t: Throwable) {
                 apiResponseListener.onFailure(t.message)
             }
 

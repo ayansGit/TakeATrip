@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.takeatrip.R
@@ -13,13 +14,15 @@ import com.takeatrip.models.room.RoomData
 import com.takeatrip.utils.hide
 import com.takeatrip.utils.show
 
-class HotelRoomAdapter(context: Context, isSelectable: Boolean, roomList: ArrayList<RoomData>, onRoomSelected:(rooms: HashMap<String, RoomData>) -> Unit): RecyclerView.Adapter<HotelRoomAdapter.ViewHolder>() {
+class HotelRoomAdapter(context: Context, isSelectable: Boolean, roomList: ArrayList<RoomData>,
+                       listener: HotelRoomAdapterListener, onRoomSelected:(rooms: HashMap<String, RoomData>) -> Unit): RecyclerView.Adapter<HotelRoomAdapter.ViewHolder>() {
 
     val context = context
     val isSelectable = isSelectable
     val roomList = roomList
     val selectedRooms = HashMap<String, RoomData>()
     val onRoomSelected = onRoomSelected
+    val listener = listener
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -49,6 +52,11 @@ class HotelRoomAdapter(context: Context, isSelectable: Boolean, roomList: ArrayL
         }
 
         holder.cb.isSelected = roomList[position].selected
+
+        holder.clParent.setOnClickListener {
+            listener.onRoomSelected(roomList[position])
+        }
+
     }
 
     override fun getItemCount(): Int {
@@ -59,6 +67,11 @@ class HotelRoomAdapter(context: Context, isSelectable: Boolean, roomList: ArrayL
         val tvRoomType = itemView.findViewById<TextView>(R.id.tvRoomType)
         val tvCapacity = itemView.findViewById<TextView>(R.id.tvCapacity)
         val cb = itemView.findViewById<CheckBox>(R.id.cb)
+        val clParent = itemView.findViewById<ConstraintLayout>(R.id.clParent)
+    }
+
+    interface HotelRoomAdapterListener{
+        fun onRoomSelected(room: RoomData)
     }
 
 }

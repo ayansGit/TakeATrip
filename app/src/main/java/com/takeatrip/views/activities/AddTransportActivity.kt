@@ -7,7 +7,6 @@ import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModelProvider
 import com.graphicalab.utils.BaseActivity
 import com.takeatrip.R
-import com.takeatrip.adapters.LocationAdapter
 import com.takeatrip.models.location.LocationData
 import com.takeatrip.viewModels.LocationViewModel
 import com.takeatrip.viewModels.TransportViewModel
@@ -62,8 +61,8 @@ class AddTransportActivity : BaseActivity(), AdapterView.OnItemSelectedListener 
             arrayOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
         )
         dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        daySpinner.adapter = dayAdapter
-        daySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        nightSpinner.adapter = dayAdapter
+        nightSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 day = p2+1
             }
@@ -107,7 +106,7 @@ class AddTransportActivity : BaseActivity(), AdapterView.OnItemSelectedListener 
             etPrice.setText("")
             etMiscellaneous.setText("")
             locationSpinner.setSelection(0)
-            daySpinner.setSelection(0)
+            nightSpinner.setSelection(0)
         })
     }
 

@@ -1,5 +1,7 @@
 package com.takeatrip.views.activities
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +11,7 @@ import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModelProvider
 import com.graphicalab.utils.BaseActivity
 import com.takeatrip.R
+import com.takeatrip.models.room.RoomData
 import com.takeatrip.viewModels.RoomViewModel
 import kotlinx.android.synthetic.main.activity_add_room.*
 import kotlinx.android.synthetic.main.header.*
@@ -46,13 +49,12 @@ class AddRoomActivity : BaseActivity(), AdapterView.OnItemSelectedListener {
             }
         }
 
+
         observeAddRoom()
         observeLoader()
         observeToast()
 
-
     }
-
 
 
     private fun observeAddRoom(){

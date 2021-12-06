@@ -38,6 +38,9 @@ class HotelActivity : BaseActivity() {
             }
 
             override fun addExtraMattress(hotelId: String) {
+                val intent = Intent(this@HotelActivity, ExtraMattressActivity::class.java)
+                intent.putExtra("HOTEL_ID", hotelId)
+                startActivity(intent)
             }
 
         })
@@ -47,6 +50,8 @@ class HotelActivity : BaseActivity() {
         fab.setOnClickListener {
             startActivity(Intent(this, AddHotelActivity::class.java))
         }
+
+
 
         observeAddHotel()
         observeDeleteHotel()

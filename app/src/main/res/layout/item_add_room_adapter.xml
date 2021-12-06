@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
@@ -44,6 +45,51 @@
                 android:layout_marginStart="@dimen/_15sdp"
                 android:layout_marginEnd="@dimen/_15sdp"
                 android:layout_marginBottom="@dimen/_15sdp"/>
+
+            <CheckBox
+                android:id="@+id/cb1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_12ssp"
+                android:theme="@style/DefaultTextStyle"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:text="Extra Mattress (for age above 12 years)"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvWithMattress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                tools:listitem="@layout/item_meal"
+                tools:itemCount="3"
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone"/>
+
+            <CheckBox
+                android:id="@+id/cb2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_12ssp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:theme="@style/DefaultTextStyle"
+                android:text="Without Extra Mattress (for child below 12 years)"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvWithoutMattress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_15sdp"
+                tools:listitem="@layout/item_meal"
+                tools:itemCount="3"
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

@@ -29,7 +29,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [RoomFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class RoomFragment : BaseFragment() {
+class RoomFragment : BaseFragment(), HotelRoomAdapter.HotelRoomAdapterListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -78,7 +78,7 @@ class RoomFragment : BaseFragment() {
     private fun observeRooms(){
         roomViewModel.observeGetRoom().observe(viewLifecycleOwner, {
             rvRooms.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-            rvRooms.adapter = HotelRoomAdapter(requireContext(), false, it as ArrayList<RoomData>){
+            rvRooms.adapter = HotelRoomAdapter(requireContext(), false, it as ArrayList<RoomData>, this){
 
             }
         })
@@ -115,5 +115,9 @@ class RoomFragment : BaseFragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onRoomSelected(room: RoomData) {
+
     }
 }

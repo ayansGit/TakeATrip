@@ -15,14 +15,15 @@ import kotlinx.android.synthetic.main.header.*
 import android.app.Activity
 
 import android.content.Intent
+import com.takeatrip.models.meal.MealData
 
 
-
-
-class SelectRoomActivity : BaseActivity() {
+class SelectRoomActivity : BaseActivity(), HotelRoomAdapter.HotelRoomAdapterListener {
 
     private lateinit var roomViewModel: RoomViewModel
     var selectedRooms = HashMap<String, RoomData>()
+    var hotelId: String? = null
+    private lateinit var room: RoomData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +43,17 @@ class SelectRoomActivity : BaseActivity() {
             finish()
         }
 
+        hotelId = intent.getStringExtra("HOTEL_ID")
+
+        if(hotelId!= null){
+            roomViewModel.getRoom(hotelId!!)
+        }else{
+            roomViewModel.getRoom()
+        }
+
         observeRooms()
+        observeExtraMattress()
+        observeMeal()
         observeLoader()
         observeToast()
     }
@@ -56,9 +67,28 @@ class SelectRoomActivity : BaseActivity() {
     private fun observeRooms(){
         roomViewModel.observeGetRoom().observe(this, {
             rvRooms.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-            rvRooms.adapter = HotelRoomAdapter(this, true, it as ArrayList<RoomData>){ rooms ->
+            rvRooms.adapter = HotelRoomAdapter(this, hotelId==null, it as ArrayList<RoomData>, this){ rooms ->
                 selectedRooms = rooms
             }
+        })
+    }
+
+    private fun observeMeal(){
+        roomViewModel.observeGetMeal().observe(this, {
+            val returnIntent = Intent()
+            room.mealList = it as ArrayList<MealData>
+            hotelId?.let { it1 -> roomViewModel.getExtraMattress(it1, room.roomTypeId) }
+        })
+    }
+
+    private fun observeExtraMattress(){
+        roomViewModel.observeGetExtraMattress().observe(this, {
+            val returnIntent = Intent()
+            room.withExtraMattress = it.withExtraMattress
+            room.withoutExtraMattress = it.withoutExtraMattress
+            returnIntent.putExtra("ROOM", room)
+            setResult(RESULT_OK, returnIntent)
+            finish()
         })
     }
 
@@ -76,8 +106,10 @@ class SelectRoomActivity : BaseActivity() {
         })
     }
 
-    override fun onResume() {
-        super.onResume()
-        roomViewModel.getRoom()
+    override fun onRoomSelected(room: RoomData) {
+        this.room = room
+        roomViewModel.getMeal(room.roomTypeId)
     }
+
+
 }
